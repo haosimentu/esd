@@ -9,7 +9,6 @@
 }
 #login_body{
 	position:absolute;
-	text-align:center;
 	left:0px;
 	top:306px;
 	width:100%;
@@ -29,46 +28,44 @@
 .body_center form{
 	padding-top: 33px;
 	padding-left: auto;
+	text-align:center;
 }
 
 .body_center form input{
-	padding:15px 20px;
+	line-height:40px;
+	text-indent: 24px;
 }
 
 
 .input_onblur{
-	border:10px;
+	border:0px;
 	background-image: url("../images/unselected_input.png");
 	background-repeat:no-repeat;
-	height: 40px;
+	line-height: 40px;
+	height:38px;
 	width:363px;
 }
 
 .input_onfocus{
-	border:10px;
+	border:0px;
 	background-image: url("../images/selected_input.png");
 	background-repeat:no-repeat;
-	height: 46px;
-	width:371px;
+	height: 44px;
+	width:370px;
+	
 }
 
 .halign_center{
+	height:47px;
+	line-height: 47px;
 	vertical-align: middle;
 }
 
-.halign_center span{
-	height:38px;
-	line-height:38px;
-	display：inline-block;
-	vertical-align:top;
-	margin-bottom:5px;
-}
 .login_button{
 	margin-top: 30px;
 }
 
-.login_button input{
-	border:1px solid;
+.login_button input[type="submit"]{
 	background-image: url("../images/login_button.png");
 	background-repeat:no-repeat;
 	width: 461px;
@@ -77,7 +74,6 @@
 	font-family: 微软雅黑;
 	font-size: 24px;
 	border:0px;
-	cursor:pointer;
 }
 
 .outer-content{
