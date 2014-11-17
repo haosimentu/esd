@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="monitor">
+	<resultMap type="Monitor" id="monitorResult">
+		<result property="id" column="ID" />
+		<result property="pipelineId" column="PIPELINEID" />
+		<result property="pipelineName" column="PIPELINENAME" />
+		<result property="stationId" column="STATIONID" />
+		<result property="stationName" column="STATIONNAME" />
+		<result property="monitorTime" column="MONITORTIME" />
+		<result property="result" column="RESULT" />
+		<result property="duration" column="DURATION" />
+	</resultMap>
+	
+	<resultMap type="Monitor" id="summaryResult">
+		<result property="pipelineId" column="PIPELINEID" />
+		<result property="pipelineName" column="PIPELINENAME" />
+		<result property="result" column="RESULT" />
+		<result property="durations" column="DURATIONS" />
+	</resultMap>
+	
+	<select id="listMonitor" resultMap="monitorResult">
+		SELECT * FROM MONITOR
+	</select>
+	
+	<insert id="insertMonitor" parameterType="java.util.Map" keyProperty="ID" useGeneratedKeys="true">
+		INSERT INTO MONITOR(PIPELINEID,PIPELINENAME,STATIONID,STATIONNAME,MONITORTIME,RESULT,VALUEE)
+		VALUES
+		( #{pipelineId}, #{pipelineName}, #{stationId}, #{stationName}, #{monitorTime},#{result},#{value})
+		ON DUPLICATE KEY UPDATE MONITORTIME=#{monitorTime},RESULT=#{result},VALUEE=#{value}
+	</insert>
+	
+	<insert id="insertMonitor4Address" parameterType="java.util.Map">
+		INSERT INTO MONITOR(PIPELINEID,PIPELINENAME,STATIONID,STATIONNAME,MONITORTIME,RESULT,VALUEE)
+		SELECT P.ID,P.NAME,S.ID,S.NAME,NOW(),#{result},#{value} 
+			FROM STATION S,PIPELINE P WHERE S.PIPELINEID=P.ID AND S.ADDRESS=#{address} AND S.SUBADDRESS=#{subAddress}
+	</insert>
+	
+	<select id="queryMonitor4Page" parameterType="java.util.Map" resultMap="monitorResult">
+		SELECT * FROM MONITOR WHERE 1=1
+		<if test="pipelineId != null"> AND PIPELINEID = #{pipelineId}</if>
+		<if test="stationId != null"> AND STATIONID = #{stationId}</if>
+		<if test="endTime != null"> AND MONITORTIME BETWEEN #{startTime} AND #{endTime} </if>
+		limit ${start},${length}
+	</select>
+	
+	<select id="queryMonitor4PageCount" parameterType="java.util.Map" resultType="java.lang.Long">
+		SELECT COUNT('X') FROM MONITOR WHERE 1=1
+		<if test="pipelineId != null"> AND PIPELINEID = #{pipelineId}</if>
+		<if test="stationId != null"> AND STATIONID = #{stationId}</if>
+		<if test="endTime != null"> AND MONITORTIME BETWEEN #{startTime} AND #{endTime} </if>
+	</select>
+	
+	<select id="queryMonitorSummary" parameterType="java.util.Map" resultMap="summaryResult">
+		<![CDATA[
+		SELECT T.PIPELINEID,T.PIPELINENAME,T.RESULT,SUM(T.DURATION) DURATIONS 
+		FROM (SELECT* FROM MONITOR WHERE MONITORTIME > #{startTime} AND MONITORTIME <= #{endTime}) T
+		GROUP BY T.PIPELINEID,T.RESULT
+		]]>
+	</select>
+	
+	<select id="queryMonitor4Pipeline" parameterType="java.util.Map" resultMap="monitorResult">
+		<![CDATA[
+		SELECT * FROM MONITOR M WHERE M.PIPELINEID=#{pipelineId} AND M.MONITORTIME > #{startTime} AND M.MONITORTIME <= #{endTime}
+		]]>
+	</select>
+	
+	<delete id="deleteMonitorByTime">
+		<![CDATA[DELETE FROM MONITOR WHERE MONITORTIME < #{endTime}]]>
+	</delete>
+	
+</mapper>

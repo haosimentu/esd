@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<bean id="dao" class="com.gooseeker.dao.Dao" abstract="true" />
+
+	<bean id="userDaoBean" class="com.gooseeker.dao.UserDao" parent="dao" />
+	<bean id="userServiceBean" class="com.gooseeker.business.impl.UserServiceImpl" />
+
+	<bean id="authorityDaoBean" class="com.gooseeker.dao.AuthorityDao" parent="dao" />
+	<bean id="menuDaoBean" class="com.gooseeker.dao.MenuDao" parent="dao" />
+	
+	<bean id="pipelineDaoBean" class="com.gooseeker.dao.PipelineDao" parent="dao" />
+	<bean id="pipelineServiceBean" class="com.gooseeker.business.impl.PipelineServiceImpl"/>
+	
+	<bean id="stationDaoBean" class="com.gooseeker.dao.StationDao" parent="dao" />
+	<bean id="stationServiceBean" class="com.gooseeker.business.impl.StationServiceImpl"/>
+	
+	<bean id="monitorDaoBean" class="com.gooseeker.dao.MonitorDao" parent="dao" />
+	<bean id="monitorServiceBean" class="com.gooseeker.business.impl.MonitorServiceImpl"/>
+	
+	<bean id="historyDaoBean" class="com.gooseeker.dao.HistoryDao" parent="dao" />
+	<bean id="historyServiceBean" class="com.gooseeker.business.impl.HistoryServiceImpl"/>
+</beans>

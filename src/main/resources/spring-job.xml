@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+	
+	<bean id="taskJob" class="com.gooseeker.job.TaskJob">
+		<!-- <property name="xx" value="yy"/> -->
+	</bean>
+	<bean id="cleanJob" class="com.gooseeker.job.CleanJob" />
+	
+	<bean id="taskTask"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="taskJob" />
+		</property>
+		<property name="targetMethod">
+			<value>execute</value>
+		</property>
+		<property name="concurrent">
+			<value>false</value>
+		</property>
+	</bean>
+	<bean id="cleanTask"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="cleanJob" />
+		</property>
+		<property name="targetMethod">
+			<value>execute</value>
+		</property>
+		<property name="concurrent">
+			<value>false</value>
+		</property>
+	</bean>
+	
+	<bean id="taskTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="taskTask" />
+		</property>
+		<property name="cronExpression">
+			<value>${system.task.cycle}</value>
+		</property>
+	</bean>
+	<bean id="cleanTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="cleanTask" />
+		</property>
+		<property name="cronExpression">
+			<value>${system.clean.cycle}</value>
+		</property>
+	</bean>
+	
+	<bean id="startQuartz" lazy-init="false"
+		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+				<ref bean="taskTrigger"/>
+				<ref bean="cleanTrigger"/>
+			</list>
+		</property>
+		<property name="autoStartup" value="true" />
+		<property name="schedulerName" value="cronScheduler" />
+	</bean>
+
+</beans> 

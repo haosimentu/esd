@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<typeAliases>
+		<typeAlias alias="Userr" type="com.gooseeker.dao.beans.Userr" />
+		<typeAlias alias="Authority" type="com.gooseeker.dao.beans.Authority" />
+		<typeAlias alias="Menu" type="com.gooseeker.dao.beans.Menu" />
+		<typeAlias alias="Pipeline" type="com.gooseeker.dao.beans.Pipeline" />
+		<typeAlias alias="Station" type="com.gooseeker.dao.beans.Station" />
+		<typeAlias alias="Monitor" type="com.gooseeker.dao.beans.Monitor" />
+		<typeAlias alias="History" type="com.gooseeker.dao.beans.History" />
+	</typeAliases>
+
+	<mappers>
+		<mapper resource="com/gooseeker/dao/beans/mapper/Userr.xml" />
+		<mapper resource="com/gooseeker/dao/beans/mapper/Authority.xml" />
+		<mapper resource="com/gooseeker/dao/beans/mapper/Menu.xml" />
+		<mapper resource="com/gooseeker/dao/beans/mapper/Pipeline.xml" />
+		<mapper resource="com/gooseeker/dao/beans/mapper/Station.xml" />
+		<mapper resource="com/gooseeker/dao/beans/mapper/Monitor.xml" />
+		<mapper resource="com/gooseeker/dao/beans/mapper/History.xml" />
+	</mappers>
+</configuration>

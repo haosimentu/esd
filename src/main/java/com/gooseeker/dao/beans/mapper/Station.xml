@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="station">
+	<resultMap type="Station" id="stationResult">
+		<result property="id" column="ID" />
+		<result property="name" column="NAME" />
+		<result property="pipelineId" column="PIPELINEID" />
+		<result property="pipelineName" column="PIPELINENAME" />
+		<result property="number" column="NUMBER" />
+		<result property="state" column="STATE" />
+		<result property="address" column="ADDRESS" />
+		<result property="subAddress" column="SUBADDRESS" />
+		<result property="createTime" column="CREATETIME" />
+		<result property="desc" column="DESCC" />
+	</resultMap>
+	
+	<select id="listStation" resultMap="stationResult">
+		SELECT * FROM STATION
+	</select>
+	
+	<insert id="insertStation" parameterType="java.util.Map" keyProperty="ID" useGeneratedKeys="true">
+		INSERT INTO STATION(NAME,PIPELINEID,NUMBER,ADDRESS,SUBADDRESS,CREATETIME,DESCC)
+		VALUES ( #{name}, #{pipelineId}, #{number}, #{address}, #{subAddress},now(), #{desc}) 
+		ON DUPLICATE KEY UPDATE UPDATES=UPDATES+1
+	</insert>
+	
+	<select id="findStations4Page" parameterType="java.util.Map" resultMap="stationResult">
+		SELECT S.*,P.NAME PIPELINENAME FROM STATION S,PIPELINE P WHERE S.PIPELINEID = P.ID
+		<if test="keyword != null"> AND (S.NAME LIKE CONCAT('%',#{keyword},'%')  OR S.NUMBER LIKE CONCAT('%',#{keyword},'%') OR P.NAME LIKE CONCAT('%',#{keyword},'%'))</if>
+		LIMIT ${start},${length}
+	</select>
+	
+	<select id="findStations4PageCount" parameterType="java.util.Map" resultType="java.lang.Integer">
+		SELECT COUNT('X') FROM STATION S,PIPELINE P WHERE S.PIPELINEID = P.ID
+		<if test="keyword != null"> AND (S.NAME LIKE CONCAT('%',#{keyword},'%')  OR S.NUMBER LIKE CONCAT('%',#{keyword},'%') OR P.NAME LIKE CONCAT('%',#{keyword},'%'))</if>
+	</select>
+	
+	<select id="deleteStation" parameterType="java.lang.Long" resultType="java.lang.Integer">
+		DELETE FROM STATION WHERE ID=#{id}
+	</select>
+	
+	<select id="getStationById" parameterType="java.lang.Long" resultMap="stationResult">
+		SELECT * FROM STATION WHERE ID=#{id}
+	</select>
+	
+	<update id="updateStation" parameterType="java.util.Map">
+		UPDATE STATION S SET S.ID=#{id}
+		<if test="name != null">,S.NAME= #{name}</if>
+		<if test="number != null">,S.NUMBER= #{number}</if>
+		<if test="pipelineId != null">,S.PIPELINEID= #{pipelineId}</if>
+		<if test="address != null">,S.ADDRESS= #{address}</if>
+		<if test="desc != null">,S.DESCC=#{desc}</if>
+		WHERE S.ID=#{id}
+	</update>
+	
+	<select id="listStation4Page" parameterType="java.util.Map" resultMap="stationResult">
+		SELECT S.*,P.NAME PIPELINENAME FROM STATION S,PIPELINE P 
+		WHERE S.PIPELINEID = P.ID AND PIPELINEID=#{pipelineId} LIMIT ${start},${length}
+	</select>
+	
+	<select id="listStation4PageCount" parameterType="java.util.Map" resultType="java.lang.Integer">
+		SELECT COUNT('X') FROM STATION S,PIPELINE P 
+		WHERE S.PIPELINEID = P.ID AND PIPELINEID=#{pipelineId}
+	</select>
+	
+	<select id="findAllAddress" resultType="java.lang.String">
+		SELECT DISTINCT ADDRESS FROM STATION
+	</select>
+</mapper>
+

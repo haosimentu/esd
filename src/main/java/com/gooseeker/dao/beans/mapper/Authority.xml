@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="authority">
+	<resultMap type="Authority" id="authorityResult">
+		<result property="id" column="ID" />
+		<result property="role" column="ROLE" />
+		<result property="userId" column="USERID" />
+	</resultMap>
+	
+	<select id="listAuthority" resultMap="authorityResult">
+		SELECT * FROM AUTHORITY
+	</select>
+	
+	<select id="findAuthoritiesByUserId" parameterType="java.lang.Long" resultMap="authorityResult">
+		SELECT * FROM AUTHORITY WHERE USERID=#{userId}
+	</select>
+	
+	<insert id="insertAuthority" parameterType="java.util.Map" keyProperty="ID" useGeneratedKeys="true">
+		INSERT INTO AUTHORITY(USERID,ROLE)
+		VALUES
+		( #{userId}, #{role}) ON DUPLICATE KEY UPDATE UPDATES=UPDATES+1
+	</insert>
+	
+	<select id="deleteAuthorityByUserId" parameterType="java.lang.Long" resultType="java.lang.Integer">
+		DELETE FROM AUTHORITY WHERE USERID=#{userId}
+	</select>
+</mapper>
+

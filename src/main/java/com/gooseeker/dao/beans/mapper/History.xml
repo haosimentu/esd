@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="history">
+	<resultMap type="History" id="historyResult">
+		<result property="id" column="ID" />
+		<result property="pipelineId" column="PIPELINEID" />
+		<result property="pipelineName" column="PIPELINENAME" />
+		<result property="stationId" column="STATIONID" />
+		<result property="stationName" column="STATIONNAME" />
+		<result property="monitorTime" column="MONITORTIME" />
+		<result property="result" column="RESULT" />
+		<result property="value" column="VALUEE" />
+		<result property="duration" column="DURATION" />
+	</resultMap>
+	
+	
+	<select id="queryHistoryByPipelineAndStation4Page" parameterType="java.util.Map" resultMap="historyResult">
+		SELECT * FROM HISTORY M WHERE 1=1
+		<if test="keyword != null"> AND (PIPELINENAME LIKE CONCAT('%',#{keyword},'%') OR STATIONNAME LIKE CONCAT('%',#{keyword},'%')) </if>
+		<if test="endTime != null"> AND MONITORTIME BETWEEN #{startTime} AND #{endTime} </if>
+		limit ${start},${length}
+	</select>
+	
+	<select id="queryHistoryByPipelineAndStation4PageCount" parameterType="java.util.Map" resultType="java.lang.Integer">
+		SELECT COUNT('X') FROM HISTORY M WHERE 1=1
+		<if test="keyword != null"> AND (PIPELINENAME LIKE CONCAT('%',#{keyword},'%') OR STATIONNAME LIKE CONCAT('%',#{keyword},'%')) </if>
+		<if test="endTime != null"> AND MONITORTIME BETWEEN #{startTime} AND #{endTime} </if>
+	</select>
+	
+	<delete id="deleteHistoryByTime">
+		<![CDATA[ DELETE FROM HISTORY WHERE MONITORTIME < #{endTime}]]>
+	</delete>
+</mapper>

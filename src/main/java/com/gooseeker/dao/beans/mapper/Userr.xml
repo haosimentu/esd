@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="user">
+	<resultMap type="Userr" id="userResult">
+		<result property="id" column="ID" />
+		<result property="name" column="NAME" />
+		<result property="account" column="ACCOUNT" />
+		<result property="password" column="PASSWORD" />
+		<result property="email" column="EMAIL" />
+		<result property="mobile" column="MOBILE" />
+		<result property="locked" column="LOCKED" />
+		<result property="expiration" column="EXPIRATION" />
+		<collection property="authorities" column="ID"
+			javaType="java.util.ArrayList" ofType="Authority"
+			select="authority.findAuthoritiesByUserId" />
+	</resultMap>
+
+	<select id="listUser" resultMap="userResult">
+		SELECT * FROM USER
+	</select>
+
+	<select id="getUser" parameterType="java.lang.Long" resultMap="userResult">
+		SELECT * FROM USER WHERE ID=#{userId}
+	</select>
+
+	<select id="findUserByAccount" parameterType="java.lang.String" resultMap="userResult">
+		SELECT * FROM USER WHERE ACCOUNT=#{account}
+	</select>
+
+	<update id="updateUserinfo" parameterType="java.util.Map">
+		UPDATE USER U SET U.ID=#{id}
+		<if test="name != null">,U.NAME= #{name}</if>
+		<if test="password != null">,U.PASSWORD= #{password}</if>
+		<if test="email != null">,U.EMAIL=#{email}</if>
+		<if test="email != null">,U.MOBILE=#{mobile}</if>
+		WHERE U.ID=#{id}
+	</update>
+	
+	<insert id="insertUserinfo" parameterType="java.util.Map" keyProperty="ID" useGeneratedKeys="true">
+		INSERT INTO USER(NAME,ACCOUNT,PASSWORD,EMAIL,MOBILE)
+		VALUES
+		( #{name}, #{account}, #{password}, #{email}, #{mobile}) ON DUPLICATE KEY UPDATE UPDATES=UPDATES+1
+	</insert>
+	
+	<select id="findUsers4Page" parameterType="java.util.Map" resultMap="userResult">
+		SELECT * FROM USER WHERE 1=1
+		<if test="keyword != null"> AND (NAME LIKE CONCAT('%',#{keyword},'%') OR ACCOUNT LIKE CONCAT('%',#{keyword},'%'))</if>
+		LIMIT ${start},${length}
+	</select>
+	<select id="findUsers4PageCount" parameterType="java.util.Map" resultType="java.lang.Integer">
+		SELECT COUNT('X') FROM USER WHERE 1=1
+		<if test="keyword != null"> AND (NAME LIKE CONCAT('%',#{keyword},'%') OR ACCOUNT LIKE CONCAT('%',#{keyword},'%'))</if>
+	</select>
+	
+	<select id="deleteUser" parameterType="java.lang.Long" resultType="java.lang.Integer">
+		DELETE FROM USER WHERE ID=#{id}
+	</select>
+	
+</mapper>

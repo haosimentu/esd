@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pipeline">
+	<resultMap type="Pipeline" id="pipelineResult">
+		<result property="id" column="ID" />
+		<result property="name" column="NAME" />
+		<result property="number" column="NUMBER" />
+		<result property="state" column="STATE" />
+		<result property="stations" column="STATIONS" />
+		<result property="createTime" column="CREATETIME" />
+		<result property="desc" column="DESCC" />
+	</resultMap>
+	
+	<select id="listPipeline" resultMap="pipelineResult">
+		SELECT * FROM PIPELINE
+	</select>
+	
+	<insert id="insertPipeline" parameterType="java.util.Map" keyProperty="ID" useGeneratedKeys="true">
+		INSERT INTO PIPELINE(NAME,NUMBER,STATIONS,CREATETIME,DESCC)
+		VALUES
+		( #{name}, #{number}, #{stations},now(), #{desc}) 
+		ON DUPLICATE KEY UPDATE UPDATES=UPDATES+1
+	</insert>
+	
+	<select id="findPipelines4Page" parameterType="java.util.Map" resultMap="pipelineResult">
+		SELECT * FROM PIPELINE WHERE 1=1
+		<if test="keyword != null"> AND (NAME LIKE CONCAT('%',#{keyword},'%') OR NUMBER LIKE CONCAT('%',#{keyword},'%')) </if>
+		LIMIT ${start},${length}
+	</select>
+	<select id="findPipelines4PageCount" parameterType="java.util.Map" resultType="java.lang.Integer">
+		SELECT COUNT('X') FROM PIPELINE WHERE 1=1
+		<if test="keyword != null"> AND (NAME LIKE CONCAT('%',#{keyword},'%') OR NUMBER LIKE CONCAT('%',#{keyword},'%')) </if>
+	</select>
+	
+	<select id="deletePipeline" parameterType="java.lang.Long" resultType="java.lang.Integer">
+		DELETE FROM PIPELINE WHERE ID=#{id}
+	</select>
+	
+	<select id="getPipelineById" parameterType="java.lang.Long" resultMap="pipelineResult">
+		SELECT * FROM PIPELINE WHERE ID=#{id}
+	</select>
+	
+	<update id="updatePipeline" parameterType="java.util.Map">
+		UPDATE PIPELINE P SET P.ID=#{id}
+		<if test="name != null">,P.NAME= #{name}</if>
+		<if test="number != null">,P.NUMBER= #{number}</if>
+		<if test="stations != null">,P.STATIONS= #{stations}</if>
+		<if test="desc != null">,P.DESCC=#{desc}</if>
+		WHERE P.ID=#{id}
+	</update>
+	
+	<update id="updatePipelineStations" parameterType="java.util.Map">
+		UPDATE PIPELINE P INNER JOIN STATION S ON P.ID = S.PIPELINEID SET P.ID=P.ID
+		<if test="num &gt; 0" > ,P.STATIONS=P.STATIONS+1 </if>
+		<if test="num &lt; 0"> ,P.STATIONS=P.STATIONS-1 </if>
+		WHERE S.ID=#{stationId}
+	</update>
+	
+</mapper>
+

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/aop 
+		http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/tx 
+		http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/context 
+        http://www.springframework.org/schema/context/spring-context.xsd">
+
+	<bean id="ds3" class="com.mchange.v2.c3p0.ComboPooledDataSource"
+		destroy-method="close">
+		<property name="driverClass" value="${metacorpora.driverClassName}" />
+		<property name="jdbcUrl" value="${metacorpora.url}" />
+		<property name="user" value="${metacorpora.username}" />
+		<property name="password" value="${metacorpora.password}" />
+	</bean>
+	<bean id="sf3" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="ds3" />
+		<property name="configLocation" value="classpath:mybatis-esd.xml" />
+	</bean>
+	<bean id="metacorpora" class="org.mybatis.spring.SqlSessionTemplate">
+		<constructor-arg name="sqlSessionFactory" ref="sf3" />
+	</bean>
+	<bean id="tm3"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="ds3" />
+	</bean>
+
+	<bean id="interceptor3"
+		class="org.springframework.transaction.interceptor.TransactionInterceptor">
+		<property name="transactionManager" ref="tm3" />
+		<!-- 配置事务属性 -->
+		<property name="transactionAttributes">
+			<props>
+				<prop key="*">PROPAGATION_NOT_SUPPORTED,readOnly</prop>
+				<prop key="delete*">PROPAGATION_SUPPORTS</prop>
+				<prop key="insert*">PROPAGATION_SUPPORTS</prop>
+				<prop key="update*">PROPAGATION_SUPPORTS</prop>
+				<prop key="save*">PROPAGATION_SUPPORTS</prop>
+				<prop key="add*">PROPAGATION_SUPPORTS</prop>
+			</props>
+		</property>
+	</bean>
+
+</beans> 
